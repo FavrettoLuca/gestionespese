@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spese di Luca</title>
+<title>Gestione Spese</title>
 <meta name="description" content="Entrate e uscite di casa, in chiaro">
 <meta name="theme-color" content="#f5f5f5">
 <link rel="manifest" href="/manifest.json">
@@ -311,9 +311,9 @@
 <body>
 <header class="max-w-6xl mx-auto px-4 md:px-6 pt-7 pb-5 flex flex-wrap items-center justify-between gap-4">
   <div class="flex items-center gap-3">
-    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-[#1a1812] text-[#fdf9ee] serif text-lg">L</div>
+    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-[#1a1812] text-[#fdf9ee] serif text-lg">€</div>
     <div>
-      <h1 class="serif text-[22px] leading-tight">Spese di Luca</h1>
+      <h1 class="serif text-[22px] leading-tight">Gestione Spese</h1>
       <p class="text-[12px] text-[var(--muted)]">Quanto entra quanto esce e dove finisce</p>
     </div>
   </div>
@@ -1151,7 +1151,7 @@ $('restoreFile').addEventListener('change', async e => {
     await load();
     apriRipristino(f.name, rows, Array.isArray(contenuto.regole) ? contenuto.regole : null);
   } catch (err){
-    toast('Questo file non è un backup di Spese di Luca');
+    toast('Questo file non è un backup di Gestione Spese');
   }
 });
 

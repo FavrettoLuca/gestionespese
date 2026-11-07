@@ -115,7 +115,7 @@ app.get('/api/backup', (req, res) => {
 // API - Ripristina un backup
 app.post('/api/backup/ripristina', (req, res) => {
     const rows = req.body && Array.isArray(req.body.transazioni) ? req.body.transazioni : null;
-    if (!rows) return res.status(400).json({ error: 'Questo file non è un backup di Spese di Luca' });
+    if (!rows) return res.status(400).json({ error: 'Questo file non è un backup di Gestione Spese' });
     // I backup vecchi (versione 1) non hanno le regole: in quel caso restano quelle attuali
     const regole = Array.isArray(req.body.regole) ? req.body.regole : null;
     creaBackup('prima-ripristino');
