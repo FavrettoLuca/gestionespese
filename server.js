@@ -16,32 +16,37 @@ const db = new sqlite3.Database('./spese.db', (err) => {
     else console.log('Connesso al database SQLite.');
 });
 
-// Crea la tabella se non esiste
-db.run(`
-    CREATE TABLE IF NOT EXISTS transazioni (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        descrizione TEXT NOT NULL,
-        importo REAL NOT NULL,
-        tipo TEXT CHECK(tipo IN ('entrata', 'uscita')) NOT NULL,
-        categoria TEXT NOT NULL,
-        data TEXT DEFAULT (date('now'))
-    )
-`);
+// Schema: tutto dentro un blocco serializzato, così su un database nuovo la
+// tabella esiste già quando parte la migrazione della colonna note
+db.serialize(() => {
+    // Crea la tabella se non esiste (note compresa fin dall'inizio)
+    db.run(`
+        CREATE TABLE IF NOT EXISTS transazioni (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            descrizione TEXT NOT NULL,
+            importo REAL NOT NULL,
+            tipo TEXT CHECK(tipo IN ('entrata', 'uscita')) NOT NULL,
+            categoria TEXT NOT NULL,
+            note TEXT,
+            data TEXT DEFAULT (date('now'))
+        )
+    `);
 
-// Migrazione: aggiunge la colonna note se non presente
-db.run(`ALTER TABLE transazioni ADD COLUMN note TEXT`, (err) => {
-    if (err && !/duplicate column/i.test(err.message)) console.error('Migrazione note:', err.message);
+    // Migrazione per i database creati prima dell'introduzione delle note
+    db.run(`ALTER TABLE transazioni ADD COLUMN note TEXT`, (err) => {
+        if (err && !/duplicate column/i.test(err.message)) console.error('Migrazione note:', err.message);
+    });
+
+    // Regole imparate: parola chiave della descrizione -> categoria e tipo
+    db.run(`
+        CREATE TABLE IF NOT EXISTS regole (
+            chiave TEXT PRIMARY KEY,
+            categoria TEXT NOT NULL,
+            tipo TEXT NOT NULL,
+            usi INTEGER DEFAULT 1
+        )
+    `);
 });
-
-// Regole imparate: parola chiave della descrizione -> categoria e tipo
-db.run(`
-    CREATE TABLE IF NOT EXISTS regole (
-        chiave TEXT PRIMARY KEY,
-        categoria TEXT NOT NULL,
-        tipo TEXT NOT NULL,
-        usi INTEGER DEFAULT 1
-    )
-`);
 
 /* ---------- Backup automatici ---------- */
 const BACKUP_DIR = path.join(__dirname, 'backups');

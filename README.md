@@ -2,6 +2,12 @@
 
 Web app locale per tenere traccia delle spese e delle entrate di casa: inserimento rapido in linguaggio naturale, categorie che si imparano da sole, grafici e backup automatici. Gira interamente sul tuo computer, senza account e senza servizi esterni.
 
+## Anteprima
+
+![Schermata dell'app con movimenti di esempio](docs/app.png)
+
+_I movimenti mostrati sono dati di esempio, non spese reali._
+
 ## Caratteristiche
 
 - **Inserimento rapido** — scrivi una riga tipo `12,50 caffè ieri` e l'app ricava importo, descrizione e data.
