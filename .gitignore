@@ -1,0 +1,28 @@
+# Dipendenze (si reinstallano con "npm install")
+node_modules/
+
+# Database locale: contiene le transazioni reali
+spese.db
+spese.db-journal
+spese.db-wal
+spese.db-shm
+
+# Backup automatici: contengono i dati reali delle spese
+backups/
+
+# Log e file generati a runtime
+server.log
+*.log
+
+# Copie di lavoro e note personali
+index copy.html
+NoteUtili/
+.cloud-attachments/
+
+# Strumenti locali (Freebuff)
+.freebuff/
+
+# File di sistema
+Thumbs.db
+desktop.ini
+.DS_Store

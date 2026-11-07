@@ -1,0 +1,18 @@
+{
+  "name": "gestionespese",
+  "version": "1.0.0",
+  "description": "Web app locale per gestire spese ed entrate di casa, con categorie che si imparano da sole",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.3.0",
+    "sqlite3": "^6.0.1"
+  }
+}
