@@ -515,6 +515,14 @@ try{
   .tipo-nativo{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;
     clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
+  /* Selettore del periodo centrato tra il titolo e i comandi di destra */
+  @media (min-width:900px){
+    header.max-w-6xl{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:18px}
+    header.max-w-6xl > div:first-child{grid-column:1;grid-row:1;justify-self:start;min-width:0}
+    header.max-w-6xl > .month-nav{grid-column:2;grid-row:1;justify-self:center}
+    header.max-w-6xl > div:last-child{grid-column:3;grid-row:1;justify-self:end}
+  }
+
   /* ---------- Variante scura: blu notte, antracite, accenti acqua ----------
      Stesso linguaggio visivo della chiara, rovesciato. Attiva con html[data-tema="scuro"]. */
   html[data-tema="scuro"]{
@@ -690,12 +698,12 @@ try{
       <p class="text-[12px] text-[var(--muted)]">Prospetto ingressi ed uscite</p>
     </div>
   </div>
+  <div class="month-nav">
+    <button id="prevMonth" title="Mese precedente" aria-label="Mese precedente">‹</button>
+    <button id="monthLabel" class="label" title="Torna a questo mese">—</button>
+    <button id="nextMonth" title="Mese successivo" aria-label="Mese successivo">›</button>
+  </div>
   <div class="flex flex-wrap items-center gap-2 justify-end">
-    <div class="month-nav">
-      <button id="prevMonth" title="Mese precedente" aria-label="Mese precedente">‹</button>
-      <button id="monthLabel" class="label" title="Torna a questo mese">—</button>
-      <button id="nextMonth" title="Mese successivo" aria-label="Mese successivo">›</button>
-    </div>
     <button id="allTime" class="btn btn-ghost" aria-pressed="false">Tutto</button>
     <button id="importBtn" class="btn btn-ghost" title="Carica i movimenti da Excel, CSV o testo incollato">Importa</button>
     <div class="relative" id="datiWrap">
@@ -1005,6 +1013,7 @@ const state = {
 };
 const money = new Intl.NumberFormat('it-IT', { style:'currency', currency:'EUR' });
 let cifreNascoste = false;
+try { cifreNascoste = localStorage.getItem('spese-cifre') === '1'; } catch (e){}
 const fmt = n => cifreNascoste ? '€ ***' : money.format(Number(n) || 0);
 const pct = (n, segno = '') => cifreNascoste ? '***%' : segno + Math.round(n) + '%';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1120,8 +1129,20 @@ function render(){
     bottone.setAttribute('aria-pressed', String(cifreNascoste));
     bottone.setAttribute('aria-label', cifreNascoste ? 'Mostra le cifre' : 'Nascondi le cifre');
     bottone.title = cifreNascoste ? 'Mostra le cifre' : 'Nascondi le cifre';
+    // evita che i valori di partenza (€ 0,00) lampeggino prima del primo render
+    if (cifreNascoste){
+      ['statEntrate','statUscite','statSaldo','chartTotal'].forEach(id => {
+        const el = $(id);
+        if (el) el.textContent = '€ ***';
+      });
+    }
   }
-  bottone.addEventListener('click', () => { cifreNascoste = !cifreNascoste; mostraStato(); render(); });
+  bottone.addEventListener('click', () => {
+    cifreNascoste = !cifreNascoste;
+    try { localStorage.setItem('spese-cifre', cifreNascoste ? '1' : '0'); } catch (e){}
+    mostraStato();
+    render();
+  });
   mostraStato();
 })();
 
