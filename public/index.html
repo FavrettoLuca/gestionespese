@@ -6,6 +6,18 @@
 <title>Gestione Spese</title>
 <meta name="description" content="Entrate e uscite di casa, in chiaro">
 <meta name="theme-color" content="#eaf2f7">
+<script>
+/* Applica subito il tema scelto, per evitare il lampo chiaro all'apertura. */
+try{
+  var temaSalvato = localStorage.getItem('spese-tema');
+  var temaScuro = temaSalvato ? temaSalvato === 'scuro' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (temaScuro){
+    document.documentElement.dataset.tema = 'scuro';
+    var metaTema = document.querySelector('meta[name="theme-color"]');
+    if (metaTema) metaTema.setAttribute('content', '#0b1a23');
+  }
+}catch(e){}
+</script>
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/svg+xml" href="/icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -460,6 +472,158 @@
     #luce{display:none}
   }
   @media (hover:none){#luce{display:none}}
+
+  /* pulsante tema, in linea con i comandi dell'header */
+  .tema-btn{width:36px;height:36px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:9999px;
+    border:1px solid rgba(15,63,74,.12);background:rgba(255,255,255,.6);color:var(--ink);cursor:pointer;
+    transition:background .15s,border-color .15s,transform .12s}
+  .tema-btn:hover{background:rgba(255,255,255,.9);border-color:rgba(15,63,74,.2)}
+  .tema-btn:active{transform:scale(.96)}
+  .tema-btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(15,63,74,.14)}
+  .tema-btn svg{width:17px;height:17px}
+  .tema-btn .ico-sole{display:none}
+
+  /* ---------- Variante scura: blu notte, antracite, accenti acqua ----------
+     Stesso linguaggio visivo della chiara, rovesciato. Attiva con html[data-tema="scuro"]. */
+  html[data-tema="scuro"]{
+    color-scheme:dark;background:#070f17;
+    --paper:#08121a;--surface:#0f1a21;--ink:#e7eff2;--muted:#93a7b1;
+    --line:#1e2c34;--accent:#e2785f;--income:#4fc3a1;
+    --panel:#0c161c;--secondary-line:#1e2c34;--soft:#93a7b1;
+    --petrolio:#123a41;--acqua:#79dcd1;
+  }
+  html[data-tema="scuro"] body{color:var(--ink)}
+  html[data-tema="scuro"] #sfondo{
+    background:
+      radial-gradient(1100px 680px at 82% -14%,rgba(120,220,210,.10),rgba(120,220,210,0) 62%),
+      radial-gradient(900px 620px at 10% 6%,rgba(70,120,190,.12),rgba(70,120,190,0) 66%),
+      linear-gradient(168deg,#0b1a23 0%,#091520 42%,#08121b 72%,#070f17 100%)}
+  html[data-tema="scuro"] #sfondo .raggio{
+    background:linear-gradient(90deg,rgba(255,255,255,0),rgba(186,240,246,.10) 46%,rgba(255,255,255,0) 72%)}
+  html[data-tema="scuro"] #sfondo .a1{background:radial-gradient(closest-side,rgba(64,178,188,.24),rgba(64,178,188,.07) 58%,rgba(64,178,188,0) 74%)}
+  html[data-tema="scuro"] #sfondo .a2{background:radial-gradient(closest-side,rgba(92,120,210,.22),rgba(92,120,210,.06) 56%,rgba(92,120,210,0) 72%)}
+  html[data-tema="scuro"] #sfondo .a3{background:radial-gradient(closest-side,rgba(80,205,190,.18),rgba(80,205,190,.06) 58%,rgba(80,205,190,0) 74%)}
+  html[data-tema="scuro"] #sfondo .polvere{
+    background:radial-gradient(circle,rgba(226,255,250,.9),rgba(121,220,209,.35) 55%,rgba(121,220,209,0) 72%);
+    box-shadow:0 0 8px rgba(121,220,209,.5);opacity:.45}
+  html[data-tema="scuro"] #sfondo::after{opacity:.035}
+  html[data-tema="scuro"] #luce{
+    background:radial-gradient(closest-side,rgba(121,220,209,.16),rgba(255,255,255,.05) 48%,rgba(121,220,209,0) 72%)}
+  html[data-tema="scuro"] #sfondo .onda{
+    border-color:rgba(121,220,209,.35);
+    background:radial-gradient(closest-side,rgba(121,220,209,.18),rgba(121,220,209,0) 72%)}
+
+  html[data-tema="scuro"] .card,
+  html[data-tema="scuro"] .card.p-4,
+  html[data-tema="scuro"] .card.p-5{
+    background:linear-gradient(158deg,rgba(18,32,40,.9),rgba(11,22,29,.78));
+    border:1px solid rgba(255,255,255,.07);
+    box-shadow:0 1px 2px rgba(0,0,0,.45),0 24px 52px -30px rgba(0,0,0,.85);
+    color:var(--ink)}
+  html[data-tema="scuro"] header .w-10.h-10{background:var(--acqua)!important;color:#062024!important}
+  html[data-tema="scuro"] header p{color:var(--muted)!important}
+  html[data-tema="scuro"] .eyebrow{color:var(--muted)}
+  html[data-tema="scuro"] h2.serif,
+  html[data-tema="scuro"] #formTitle{color:var(--ink)}
+  html[data-tema="scuro"] #statSaldo{color:var(--ink)!important}
+  html[data-tema="scuro"] #statEntrateMeta,
+  html[data-tema="scuro"] #statUsciteMeta,
+  html[data-tema="scuro"] #statSaldoMeta{color:var(--muted)!important}
+  html[data-tema="scuro"] .cat-list{color:var(--ink)}
+
+  html[data-tema="scuro"] .btn-primary{background:#dff2ed;color:#08181c;border:0}
+  html[data-tema="scuro"] .btn-primary:hover{background:#c6e8e0;color:#08181c}
+  html[data-tema="scuro"] .btn-ghost{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid rgba(255,255,255,.10)}
+  html[data-tema="scuro"] .btn-ghost:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.16)}
+  html[data-tema="scuro"] .btn-ghost[aria-pressed="true"]{background:var(--acqua);color:#062024;border-color:var(--acqua)}
+  html[data-tema="scuro"] .tema-btn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)}
+  html[data-tema="scuro"] .tema-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.18)}
+  html[data-tema="scuro"] .tema-btn:focus-visible{box-shadow:0 0 0 3px rgba(121,220,209,.22)}
+  html[data-tema="scuro"] .tema-btn .ico-luna{display:none}
+  html[data-tema="scuro"] .tema-btn .ico-sole{display:block}
+
+  html[data-tema="scuro"] .month-nav{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.10)}
+  html[data-tema="scuro"] .month-nav button{color:var(--ink)}
+  html[data-tema="scuro"] .month-nav button:hover{background:rgba(255,255,255,.08)}
+  html[data-tema="scuro"] .seg{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.10)}
+  html[data-tema="scuro"] .seg button{color:var(--muted)}
+  html[data-tema="scuro"] .seg button[aria-pressed="true"]{background:rgba(255,255,255,.12);color:var(--ink);box-shadow:none}
+  html[data-tema="scuro"] .field{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.10);color:var(--ink)}
+  html[data-tema="scuro"] .field::placeholder{color:#6f8590}
+  html[data-tema="scuro"] .field:focus{border-color:rgba(121,220,209,.45);box-shadow:0 0 0 3px rgba(121,220,209,.14)}
+  html[data-tema="scuro"] select.field option{background:#0f1a21;color:var(--ink)}
+  html[data-tema="scuro"] #quickWrap{background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.08)!important}
+  html[data-tema="scuro"] #quick{background:rgba(255,255,255,.06)!important}
+
+  html[data-tema="scuro"] .cat-list,
+  html[data-tema="scuro"] .dati-menu,
+  html[data-tema="scuro"] #quickList,
+  html[data-tema="scuro"] .date-popover{
+    background:#0d1820;border-color:rgba(255,255,255,.09);
+    box-shadow:0 26px 54px -22px rgba(0,0,0,.85);color:var(--ink)}
+  html[data-tema="scuro"] .cat-list li.item[aria-selected="true"],
+  html[data-tema="scuro"] .dati-menu button:hover,
+  html[data-tema="scuro"] #quickList li[aria-selected="true"]{background:rgba(255,255,255,.07)}
+  html[data-tema="scuro"] .dati-menu button,
+  html[data-tema="scuro"] .cat-list li.item,
+  html[data-tema="scuro"] #quickList li{color:var(--ink)}
+  html[data-tema="scuro"] .dati-menu button small,
+  html[data-tema="scuro"] #quickList li.empty,
+  html[data-tema="scuro"] .cat-list .grp{color:var(--muted)}
+
+  html[data-tema="scuro"] .pill{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#c2d2da}
+  html[data-tema="scuro"] tbody tr:hover{background:rgba(255,255,255,.04)}
+  html[data-tema="scuro"] .icon-btn{color:var(--muted)}
+  html[data-tema="scuro"] .icon-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.10);color:var(--ink)}
+  html[data-tema="scuro"] .icon-btn.danger:hover{background:rgba(226,120,95,.14);color:#f0a08b;border-color:rgba(226,120,95,.28)}
+  html[data-tema="scuro"] .bar{background:rgba(255,255,255,.10)}
+  html[data-tema="scuro"] table thead tr,
+  html[data-tema="scuro"] .preview-wrap th{background:rgba(255,255,255,.04)!important;color:var(--muted)!important}
+  html[data-tema="scuro"] table td{color:var(--ink)}
+  html[data-tema="scuro"] .border-t,
+  html[data-tema="scuro"] .border-b{border-color:var(--line)!important}
+  html[data-tema="scuro"] .preview-wrap{border-color:rgba(255,255,255,.10)}
+  html[data-tema="scuro"] .preview-wrap th{border-bottom-color:rgba(255,255,255,.10)!important}
+  html[data-tema="scuro"] .preview-wrap td{border-bottom-color:rgba(255,255,255,.06);color:var(--ink)}
+  html[data-tema="scuro"] #dropZone{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.16)}
+  html[data-tema="scuro"] #dropZone:hover,
+  html[data-tema="scuro"] #dropZone.over{background:rgba(255,255,255,.08);border-color:rgba(121,220,209,.5)}
+  html[data-tema="scuro"] kbd{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#a9bcc6}
+  html[data-tema="scuro"] dialog::backdrop{background:rgba(0,0,0,.66);backdrop-filter:blur(4px)}
+  html[data-tema="scuro"] dialog .card{background:#0d1820;color:var(--ink)}
+  html[data-tema="scuro"] .toast{background:#dff2ed;color:#08181c;box-shadow:0 18px 40px -18px rgba(0,0,0,.9)}
+  html[data-tema="scuro"] [class*="bg-[#fbf8f0]"],
+  html[data-tema="scuro"] [class*="bg-[#fbf7ec]"],
+  html[data-tema="scuro"] [class*="bg-[#fdfaf2]"]{background:rgba(255,255,255,.05)!important}
+  html[data-tema="scuro"] [class*="border-[#f1ece0]"]{border-color:rgba(255,255,255,.09)!important}
+
+  html[data-tema="scuro"] .spending-compare{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.03);box-shadow:none}
+  html[data-tema="scuro"] .compare-title{color:var(--ink)}
+  html[data-tema="scuro"] .compare-caption,
+  html[data-tema="scuro"] .compare-period-label,
+  html[data-tema="scuro"] .compare-vs{color:var(--muted)}
+  html[data-tema="scuro"] .compare-tag{border-color:rgba(255,255,255,.14);color:#c2d2da}
+  html[data-tema="scuro"] .compare-period-value{color:var(--ink)}
+  html[data-tema="scuro"] .compare-delta{border-top-color:rgba(255,255,255,.08);color:#cfe0e6}
+  html[data-tema="scuro"] .compare-delta strong,
+  html[data-tema="scuro"] .compare-delta.is-down strong,
+  html[data-tema="scuro"] .compare-delta.is-same strong{color:var(--acqua)}
+  html[data-tema="scuro"] .compare-empty{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:var(--muted)}
+
+  html[data-tema="scuro"] .date-trigger{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--ink)}
+  html[data-tema="scuro"] .date-trigger:hover{background:rgba(255,255,255,.10)}
+  html[data-tema="scuro"] .date-trigger:focus-visible{box-shadow:0 0 0 2px rgba(121,220,209,.25)}
+  html[data-tema="scuro"] .cal-label,
+  html[data-tema="scuro"] .cal-nav,
+  html[data-tema="scuro"] .cal-day{color:var(--ink)}
+  html[data-tema="scuro"] .cal-nav:hover,
+  html[data-tema="scuro"] .cal-day:hover{background:rgba(255,255,255,.08);border-color:transparent}
+  html[data-tema="scuro"] .cal-dow{color:var(--muted)}
+  html[data-tema="scuro"] .cal-day[aria-pressed="true"]{background:var(--acqua);color:#062024;font-weight:600}
+  html[data-tema="scuro"] .cal-day[aria-current="date"]:not([aria-pressed="true"]){box-shadow:inset 0 0 0 1px var(--acqua)}
+  html[data-tema="scuro"] .cal-shortcuts{border-top-color:rgba(255,255,255,.08)}
+  html[data-tema="scuro"] .cal-shortcuts button{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--ink)}
+  html[data-tema="scuro"] .cal-shortcuts button:hover{background:rgba(255,255,255,.10)}
 </style>
 </head>
 <body>
@@ -513,6 +677,10 @@
       </div>
       <input id="restoreFile" type="file" accept=".json,application/json" class="hidden">
     </div>
+    <button id="temaBtn" class="tema-btn" type="button" aria-pressed="false" aria-label="Passa al tema scuro" title="Tema scuro">
+      <svg class="ico ico-luna" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 12.2A6.6 6.6 0 0 1 7.8 4a6.7 6.7 0 1 0 8.2 8.2Z"/></svg>
+      <svg class="ico ico-sole" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.4v1.8M10 15.8v1.8M2.4 10h1.8M15.8 10h1.8M4.6 4.6l1.3 1.3M14.1 14.1l1.3 1.3M15.4 4.6l-1.3 1.3M5.9 14.1l-1.3 1.3"/></svg>
+    </button>
   </div>
 </header>
 <section class="max-w-6xl mx-auto px-4 md:px-6 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
@@ -2054,6 +2222,34 @@ load();
     sfondo.appendChild(onda);
     onda.addEventListener('animationend', () => onda.remove());
   }, { passive: true });
+})();
+</script>
+<script>
+/* ---------- Tema chiaro / scuro ---------- */
+(function(){
+  const radice = document.documentElement;
+  const bottone = document.getElementById('temaBtn');
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!bottone) return;
+  const CHIAVE = 'spese-tema';
+
+  function applica(tema){
+    const scuro = tema === 'scuro';
+    if (scuro) radice.dataset.tema = 'scuro';
+    else delete radice.dataset.tema;
+    bottone.setAttribute('aria-pressed', String(scuro));
+    bottone.setAttribute('aria-label', scuro ? 'Passa al tema chiaro' : 'Passa al tema scuro');
+    bottone.title = scuro ? 'Tema chiaro' : 'Tema scuro';
+    if (meta) meta.setAttribute('content', scuro ? '#0b1a23' : '#eaf2f7');
+  }
+
+  applica(radice.dataset.tema === 'scuro' ? 'scuro' : 'chiaro');
+
+  bottone.addEventListener('click', () => {
+    const nuovo = radice.dataset.tema === 'scuro' ? 'chiaro' : 'scuro';
+    applica(nuovo);
+    try { localStorage.setItem(CHIAVE, nuovo); } catch (e){}
+  });
 })();
 </script>
 </body>
