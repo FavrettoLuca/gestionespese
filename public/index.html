@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestione Spese</title>
 <meta name="description" content="Entrate e uscite di casa, in chiaro">
-<meta name="theme-color" content="#f5f5f5">
+<meta name="theme-color" content="#eaf2f7">
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" type="image/svg+xml" href="/icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -305,9 +305,183 @@
   #quickList li{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:9px;font-size:12.5px;cursor:pointer;color:#0a0a0a}
   #quickList li[aria-selected="true"]{background:#f0f0f0}
   #quickList li.empty{display:block;color:#737373;cursor:default;font-size:11.5px;line-height:1.4}
+
+  /* ---------- Sfondo dinamico "acqua e petrolio" ----------
+     Concept: finanza tranquilla. Carta fredda chiara, tre aloni che derivano
+     lentamente, polvere sospesa, grana finissima e una luce che segue il cursore.
+     Solo aspetto: nessuna regola tocca dati, calcoli o markup funzionale. */
+  :root{
+    --paper:#eaf1f6;--surface:#fbfdff;--ink:#0d1b22;--muted:#556a75;
+    --line:#d8e4ec;--accent:#c8452f;--income:#1c7f68;
+    --panel:#f3f8fb;--secondary-line:#d8e4ec;--soft:#556a75;
+    --petrolio:#0f3f4a;--acqua:#6fd0c6;
+  }
+  html{background:#e9f0f6}
+  body{background:transparent;color:var(--ink)}
+  body>header,body>main,body>section,body>footer{position:relative;z-index:1}
+
+  /* livello di fondo: fisso, dietro i contenuti, non intercetta il mouse */
+  #sfondo{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+    background:
+      radial-gradient(1200px 720px at 80% -12%,rgba(255,255,255,.92),rgba(255,255,255,0) 62%),
+      linear-gradient(168deg,#f3f8fb 0%,#eaf2f7 42%,#e2edf3 74%,#dbe8ef 100%)}
+  #sfondo .strato{position:absolute;inset:-6%;transform:translate3d(var(--px,0px),var(--py,0px),0);transition:transform .5s ease-out}
+  /* fascia di luce che attraversa il fondo molto lentamente */
+  #sfondo .raggio{position:absolute;left:-30%;top:30%;width:170vmax;height:44vmax;
+    background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.55) 46%,rgba(255,255,255,0) 72%);
+    will-change:transform;animation:raggio 96s ease-in-out infinite alternate}
+  @keyframes raggio{from{transform:rotate(-16deg) translate3d(-6%,0,0)}to{transform:rotate(-13deg) translate3d(8%,2%,0)}}
+  #sfondo .alone{position:absolute;border-radius:50%;will-change:transform}
+  #sfondo .a1{left:-10%;top:-30%;width:62vmax;height:62vmax;
+    background:radial-gradient(closest-side,rgba(64,146,157,.34),rgba(64,146,157,.12) 58%,rgba(64,146,157,0) 74%);
+    animation:deriva-a 88s ease-in-out infinite alternate}
+  #sfondo .a2{right:-14%;top:-18%;width:56vmax;height:56vmax;
+    background:radial-gradient(closest-side,rgba(88,108,170,.28),rgba(88,108,170,.09) 56%,rgba(88,108,170,0) 72%);
+    animation:deriva-b 104s ease-in-out infinite alternate}
+  #sfondo .a3{left:14%;bottom:-38%;width:72vmax;height:58vmax;
+    background:radial-gradient(closest-side,rgba(99,196,187,.30),rgba(99,196,187,.10) 58%,rgba(99,196,187,0) 74%);
+    animation:deriva-c 122s ease-in-out infinite alternate}
+  @keyframes deriva-a{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(6%,3%,0) scale(1.12)}}
+  @keyframes deriva-b{from{transform:translate3d(0,0,0) scale(1.06)}to{transform:translate3d(-7%,4%,0) scale(1)}}
+  @keyframes deriva-c{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-5%,-4%,0) scale(1.1)}}
+
+  /* polvere sospesa: pochi granelli, movimento minimo */
+  #sfondo .polvere{position:absolute;width:4px;height:4px;border-radius:50%;opacity:.34;
+    background:radial-gradient(circle,rgba(18,86,96,.55),rgba(18,86,96,0) 70%);
+    box-shadow:0 0 6px rgba(56,142,152,.35);
+    animation:fluttua 30s ease-in-out infinite alternate;will-change:transform}
+  @keyframes fluttua{from{transform:translate3d(0,0,0)}to{transform:translate3d(16px,-42px,0)}}
+  .p1{left:7%;top:24%;animation-duration:37s}
+  .p2{left:18%;top:70%;width:3px;height:3px;animation-duration:43s;animation-delay:-6s}
+  .p3{left:31%;top:38%;width:5px;height:5px;opacity:.22;animation-duration:51s;animation-delay:-16s}
+  .p4{left:44%;top:82%;animation-duration:39s;animation-delay:-11s}
+  .p5{left:57%;top:16%;width:3px;height:3px;animation-duration:46s;animation-delay:-22s}
+  .p6{left:68%;top:58%;width:6px;height:6px;opacity:.18;animation-duration:55s;animation-delay:-9s}
+  .p7{left:79%;top:32%;animation-duration:41s;animation-delay:-27s}
+  .p8{left:88%;top:74%;width:3px;height:3px;animation-duration:48s;animation-delay:-3s}
+  .p9{left:24%;top:52%;width:2px;height:2px;opacity:.4;animation-duration:34s;animation-delay:-19s}
+  .p10{left:73%;top:88%;width:2px;height:2px;opacity:.38;animation-duration:36s;animation-delay:-13s}
+
+  /* grana: toglie l'effetto "gradiente digitale" */
+  #sfondo::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.028;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size:170px 170px}
+
+  /* luce che segue il cursore e onda al tocco */
+  #luce{position:absolute;left:0;top:0;width:620px;height:620px;margin:-310px 0 0 -310px;border-radius:50%;opacity:0;
+    background:radial-gradient(closest-side,rgba(255,255,255,.85),rgba(111,208,198,.20) 46%,rgba(111,208,198,0) 72%);
+    transition:opacity .6s ease;will-change:transform}
+  #luce.attiva{opacity:1}
+  #sfondo .onda{position:absolute;width:140px;height:140px;margin:-70px 0 0 -70px;border-radius:50%;
+    border:1px solid rgba(15,63,74,.18);background:radial-gradient(closest-side,rgba(255,255,255,.5),rgba(255,255,255,0) 72%);
+    animation:onda 1000ms cubic-bezier(.16,.62,.3,1) forwards}
+  @keyframes onda{from{transform:scale(.2);opacity:.9}to{transform:scale(6.4);opacity:0}}
+
+  /* superfici semitrasparenti: lo sfondo resta percepibile sotto le card */
+  .card,.card.p-4,.card.p-5{
+    background:linear-gradient(158deg,rgba(255,255,255,.88),rgba(255,255,255,.68));
+    border:1px solid rgba(255,255,255,.9);color:var(--ink);
+    box-shadow:0 1px 2px rgba(10,34,44,.05),0 18px 40px -28px rgba(10,34,44,.45);
+    -webkit-backdrop-filter:blur(10px) saturate(1.06);backdrop-filter:blur(10px) saturate(1.06)}
+  header .w-10.h-10{background:var(--petrolio)!important;color:#f2fbfa!important;border:0}
+  header p{color:var(--muted)!important}
+  .eyebrow{color:var(--muted)}
+  h2.serif,#formTitle{color:var(--ink)}
+  #statEntrateMeta,#statUsciteMeta,#statSaldoMeta{color:var(--muted)!important}
+  .btn-primary{background:var(--petrolio);color:#f3fbfa;border:0}
+  .btn-primary:hover{background:#14505d;color:#f3fbfa}
+  .btn-ghost{background:rgba(255,255,255,.55);color:var(--ink);border:1px solid rgba(15,63,74,.10)}
+  .btn-ghost:hover{background:rgba(255,255,255,.85);border-color:rgba(15,63,74,.16)}
+  .btn-ghost[aria-pressed="true"]{background:var(--petrolio);color:#f3fbfa;border-color:var(--petrolio)}
+  .month-nav{background:rgba(255,255,255,.72);border-color:rgba(15,63,74,.10);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .month-nav button{color:var(--ink)}
+  .month-nav button:hover{background:rgba(15,63,74,.06)}
+  .seg{background:rgba(255,255,255,.5);border-color:rgba(15,63,74,.10)}
+  .seg button{color:var(--muted)}
+  .seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(10,34,44,.10)}
+  .field{background:rgba(255,255,255,.78);border:1px solid rgba(15,63,74,.10);color:var(--ink)}
+  .field::placeholder{color:#7f919b}
+  .field:focus{border-color:rgba(15,63,74,.28);box-shadow:0 0 0 3px rgba(15,63,74,.10)}
+  select.field option{background:#fbfdff;color:var(--ink)}
+  #quickWrap{background:rgba(255,255,255,.55)!important;border-color:rgba(15,63,74,.08)!important}
+  #quick{background:rgba(255,255,255,.72)!important}
+  .cat-list,.dati-menu,#quickList,.date-popover{background:rgba(255,255,255,.97);border-color:rgba(15,63,74,.10);
+    box-shadow:0 24px 50px -24px rgba(10,34,44,.4);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  .cat-list li.item[aria-selected="true"],.dati-menu button:hover,#quickList li[aria-selected="true"]{background:rgba(15,63,74,.06)}
+  .dati-menu button,.cat-list li.item,#quickList li{color:var(--ink)}
+  .dati-menu button small,#quickList li.empty,.cat-list .grp{color:var(--muted)}
+  .pill{background:rgba(255,255,255,.6);border-color:rgba(15,63,74,.12);color:#2c4b55}
+  tbody tr:hover{background:rgba(255,255,255,.6)}
+  .icon-btn{color:var(--muted)}
+  .icon-btn:hover{background:rgba(255,255,255,.7);border-color:rgba(15,63,74,.10);color:var(--ink)}
+  .icon-btn.danger:hover{background:#fdecea;color:#bf2e1c;border-color:#f6d6d1}
+  .bar{background:rgba(15,63,74,.10)}
+  table thead tr,.preview-wrap th{background:rgba(255,255,255,.6)!important;color:var(--muted)!important}
+  table td{color:var(--ink)}
+  .border-t,.border-b{border-color:var(--line)!important}
+  .preview-wrap{border-color:rgba(15,63,74,.10)}
+  .preview-wrap th{border-bottom-color:rgba(15,63,74,.10)!important}
+  .preview-wrap td{border-bottom-color:rgba(15,63,74,.07);color:var(--ink)}
+  #dropZone{background:rgba(255,255,255,.55);border-color:rgba(15,63,74,.18)}
+  #dropZone:hover,#dropZone.over{background:rgba(255,255,255,.82);border-color:rgba(15,63,74,.4)}
+  kbd{background:rgba(255,255,255,.6);border-color:rgba(15,63,74,.14);color:#405763}
+  dialog::backdrop{background:rgba(8,26,33,.42);backdrop-filter:blur(3px)}
+  dialog .card{background:rgba(255,255,255,.97);color:var(--ink)}
+  .toast{background:var(--petrolio);color:#f3fbfa;box-shadow:0 16px 34px -16px rgba(8,26,33,.6)}
+  [class*="text-[#6c685c]"],[class*="text-[#a8a392]"],[class*="text-[#9c9789]"],[class*="text-[#aca795]"],[class*="text-[#5f5a4d]"]{color:var(--muted)!important}
+  [class*="text-[#0a0a0a]"],[class*="text-[#171717]"]{color:var(--ink)!important}
+  [class*="bg-[#fbf8f0]"],[class*="bg-[#fbf7ec]"],[class*="bg-[#fdfaf2]"]{background:rgba(255,255,255,.55)!important}
+  [class*="border-[#f1ece0]"]{border-color:rgba(15,63,74,.10)!important}
+  .spending-compare{border-color:rgba(15,63,74,.10);background:rgba(255,255,255,.5);box-shadow:0 1px 2px rgba(10,34,44,.04)}
+  .compare-title{color:var(--ink)}
+  .compare-caption,.compare-period-label,.compare-vs{color:var(--muted)}
+  .compare-tag{border-color:rgba(15,63,74,.14);color:#2c4b55}
+  .compare-period-value{color:var(--ink)}
+  .compare-delta{border-top-color:rgba(15,63,74,.10);color:#17313a}
+  .compare-delta strong,.compare-delta.is-down strong,.compare-delta.is-same strong{color:var(--petrolio)}
+  .compare-empty{border-color:rgba(15,63,74,.10);background:rgba(255,255,255,.5);color:var(--muted)}
+  .date-trigger{background:rgba(255,255,255,.7);border-color:rgba(15,63,74,.12);color:var(--ink)}
+  .date-trigger:hover{background:rgba(255,255,255,.95)}
+  .date-trigger:focus-visible{box-shadow:0 0 0 2px rgba(15,63,74,.18)}
+  .cal-label{color:var(--ink)}
+  .cal-nav{color:var(--ink)}
+  .cal-nav:hover,.cal-day:hover{background:rgba(15,63,74,.06);border-color:rgba(15,63,74,.10)}
+  .cal-dow{color:var(--muted)}
+  .cal-day{color:var(--ink)}
+  .cal-day[aria-pressed="true"]{background:var(--petrolio);color:#f3fbfa}
+  .cal-day[aria-current="date"]:not([aria-pressed="true"]){box-shadow:inset 0 0 0 1px var(--petrolio)}
+  .cal-shortcuts{border-top-color:rgba(15,63,74,.10)}
+  .cal-shortcuts button{background:rgba(255,255,255,.7);border-color:rgba(15,63,74,.12);color:var(--ink)}
+  .cal-shortcuts button:hover{background:#fff}
+  @media(max-width:640px){.card,.card.p-4,.card.p-5{-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}}
+  @media (prefers-reduced-motion:reduce){
+    #sfondo .alone,#sfondo .polvere{animation:none!important}
+    #sfondo .strato{transition:none}
+    #luce{display:none}
+  }
+  @media (hover:none){#luce{display:none}}
 </style>
 </head>
 <body>
+<div id="sfondo" aria-hidden="true">
+  <div class="strato">
+    <span class="raggio"></span>
+    <span class="alone a1"></span>
+    <span class="alone a2"></span>
+    <span class="alone a3"></span>
+    <span class="polvere p1"></span>
+    <span class="polvere p2"></span>
+    <span class="polvere p3"></span>
+    <span class="polvere p4"></span>
+    <span class="polvere p5"></span>
+    <span class="polvere p6"></span>
+    <span class="polvere p7"></span>
+    <span class="polvere p8"></span>
+    <span class="polvere p9"></span>
+    <span class="polvere p10"></span>
+  </div>
+  <div id="luce"></div>
+</div>
 <header class="max-w-6xl mx-auto px-4 md:px-6 pt-7 pb-5 flex flex-wrap items-center justify-between gap-4">
   <div class="flex items-center gap-3">
     <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-[#1a1812] text-[#fdf9ee] serif text-lg">€</div>
@@ -1842,6 +2016,45 @@ state.month = (() => {
 })();
 renderQuickHint();
 load();
+</script>
+<script>
+/* ---------- Sfondo: luce sul cursore, parallasse e onda ---------- */
+(function(){
+  const sfondo = document.getElementById('sfondo');
+  const luce = document.getElementById('luce');
+  if (!sfondo || !luce) return;
+  const strato = sfondo.querySelector('.strato');
+  const meno = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let raf = 0, nx = .5, ny = .5, vx = 0, vy = 0;
+
+  function disegna(){
+    raf = 0;
+    strato.style.setProperty('--px', ((nx - .5) * 14).toFixed(2) + 'px');
+    strato.style.setProperty('--py', ((ny - .5) * 10).toFixed(2) + 'px');
+    luce.style.transform = 'translate3d(' + vx.toFixed(1) + 'px,' + vy.toFixed(1) + 'px,0)';
+  }
+
+  window.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch' || meno.matches) return;
+    nx = e.clientX / window.innerWidth;
+    ny = e.clientY / window.innerHeight;
+    vx = e.clientX; vy = e.clientY;
+    luce.classList.add('attiva');
+    if (!raf) raf = requestAnimationFrame(disegna);
+  }, { passive: true });
+
+  document.addEventListener('pointerleave', () => luce.classList.remove('attiva'));
+
+  document.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'touch' || meno.matches) return;
+    const onda = document.createElement('span');
+    onda.className = 'onda';
+    onda.style.left = e.clientX + 'px';
+    onda.style.top = e.clientY + 'px';
+    sfondo.appendChild(onda);
+    onda.addEventListener('animationend', () => onda.remove());
+  }, { passive: true });
+})();
 </script>
 </body>
 </html>
