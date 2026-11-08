@@ -10,7 +10,9 @@
 /* Applica subito il tema scelto, per evitare il lampo chiaro all'apertura. */
 try{
   var temaSalvato = localStorage.getItem('spese-tema');
-  var temaScuro = temaSalvato ? temaSalvato === 'scuro' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  var oraCorrente = new Date().getHours();
+  var temaNotte = oraCorrente >= 19 || oraCorrente < 7;
+  var temaScuro = temaSalvato ? temaSalvato === 'scuro' : temaNotte;
   if (temaScuro){
     document.documentElement.dataset.tema = 'scuro';
     var metaTema = document.querySelector('meta[name="theme-color"]');
@@ -331,6 +333,7 @@ try{
   html{background:#e9f0f6}
   body{background:transparent;color:var(--ink)}
   body>header,body>main,body>section,body>footer{position:relative;z-index:1}
+  body>header{z-index:30}
 
   /* livello di fondo: fisso, dietro i contenuti, non intercetta il mouse */
   #sfondo{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
@@ -420,6 +423,10 @@ try{
   .cat-list,.dati-menu,#quickList,.date-popover{background:rgba(255,255,255,.97);border-color:rgba(15,63,74,.10);
     box-shadow:0 24px 50px -24px rgba(10,34,44,.4);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
   .cat-list li.item[aria-selected="true"],.dati-menu button:hover,#quickList li[aria-selected="true"]{background:rgba(15,63,74,.06)}
+  .dati-menu{width:238px}
+  .dati-menu button{gap:10px}
+  .dati-menu button span,.dati-menu button small{white-space:nowrap}
+  .dati-menu button small{text-align:right}
   .dati-menu button,.cat-list li.item,#quickList li{color:var(--ink)}
   .dati-menu button small,#quickList li.empty,.cat-list .grp{color:var(--muted)}
   .pill{background:rgba(255,255,255,.6);border-color:rgba(15,63,74,.12);color:#2c4b55}
@@ -482,6 +489,24 @@ try{
   .tema-btn:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(15,63,74,.14)}
   .tema-btn svg{width:17px;height:17px}
   .tema-btn .ico-sole{display:none}
+
+  /* Tipo: Uscita / Entrata, controllo segmentato al posto del select nativo */
+  .tipo-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;height:38px;padding:4px;
+    background:rgba(15,63,74,.05);border:1px solid rgba(15,63,74,.10);border-radius:16px}
+  .tipo-switch button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0;
+    border:1px solid transparent;background:transparent;border-radius:12px;font:inherit;font-size:13.5px;font-weight:500;
+    color:var(--muted);cursor:pointer;transition:background .16s,color .16s,border-color .16s,box-shadow .16s}
+  .tipo-switch button:hover{color:var(--ink)}
+  .tipo-switch button[aria-pressed="true"]{background:#fff;color:var(--ink);border-color:rgba(15,63,74,.08);
+    box-shadow:0 1px 2px rgba(10,34,44,.12)}
+  .tipo-switch .dot{width:7px;height:7px;border-radius:99px;flex:none}
+  .tipo-switch button[data-tipo="uscita"] .dot{background:var(--accent)}
+  .tipo-switch button[data-tipo="entrata"] .dot{background:var(--income)}
+  .tipo-switch button[aria-pressed="true"][data-tipo="uscita"]{color:var(--accent)}
+  .tipo-switch button[aria-pressed="true"][data-tipo="entrata"]{color:var(--income)}
+  .tipo-switch button:focus-visible{outline:none;box-shadow:0 0 0 2px rgba(15,63,74,.20)}
+  .tipo-nativo{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;
+    clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
   /* ---------- Variante scura: blu notte, antracite, accenti acqua ----------
      Stesso linguaggio visivo della chiara, rovesciato. Attiva con html[data-tema="scuro"]. */
@@ -624,6 +649,8 @@ try{
   html[data-tema="scuro"] .cal-shortcuts{border-top-color:rgba(255,255,255,.08)}
   html[data-tema="scuro"] .cal-shortcuts button{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--ink)}
   html[data-tema="scuro"] .cal-shortcuts button:hover{background:rgba(255,255,255,.10)}
+  html[data-tema="scuro"] .tipo-switch{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.10)}
+  html[data-tema="scuro"] .tipo-switch button[aria-pressed="true"]{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.07);box-shadow:none}
 </style>
 </head>
 <body>
@@ -754,8 +781,12 @@ try{
           </div>
         </div>
         <div>
-          <label class="block text-[12px] font-medium text-[#6c685c] mb-1.5" for="tipo">Tipo</label>
-          <select id="tipo" class="field">
+          <span class="block text-[12px] font-medium text-[#6c685c] mb-1.5" id="tipoLabel">Tipo</span>
+          <div class="tipo-switch" id="tipoSwitch" role="group" aria-labelledby="tipoLabel">
+            <button type="button" data-tipo="uscita" aria-pressed="true"><span class="dot"></span>Uscita</button>
+            <button type="button" data-tipo="entrata" aria-pressed="false"><span class="dot"></span>Entrata</button>
+          </div>
+          <select id="tipo" class="tipo-nativo" tabindex="-1" aria-hidden="true">
             <option value="uscita">Uscita</option>
             <option value="entrata">Entrata</option>
           </select>
@@ -1307,6 +1338,7 @@ function startEdit(id){
   $('desc').value = tx.descrizione;
   $('importo').value = tx.importo;
   $('tipo').value = tx.tipo;
+  if (window.__syncTipoUI) window.__syncTipoUI();
   $('categoria').value = tx.categoria;
   $('note').value = tx.note || '';
   state.formDate = isISODate(tx.data) ? tx.data : todayISO();
@@ -1360,6 +1392,7 @@ $('desc').addEventListener('blur', () => {
   if (!regola) return;
   $('categoria').value = regola.categoria;
   $('tipo').value = regola.tipo;
+  if (window.__syncTipoUI) window.__syncTipoUI();
 });
 
 /* ---------- Azioni riga / eliminazione ---------- */
@@ -2243,13 +2276,68 @@ load();
     if (meta) meta.setAttribute('content', scuro ? '#0b1a23' : '#eaf2f7');
   }
 
-  applica(radice.dataset.tema === 'scuro' ? 'scuro' : 'chiaro');
+  let sceltaManuale = null;
+  try { sceltaManuale = localStorage.getItem(CHIAVE); } catch (e){}
+
+  const ORA_SCURO = 19, ORA_CHIARO = 7;
+  function temaPerOra(){
+    const h = new Date().getHours();
+    return (h >= ORA_SCURO || h < ORA_CHIARO) ? 'scuro' : 'chiaro';
+  }
+  const temaAttuale = () => radice.dataset.tema === 'scuro' ? 'scuro' : 'chiaro';
+
+  applica(sceltaManuale || temaPerOra());
+
+  function ricontrolla(){
+    if (sceltaManuale) return;
+    const voluto = temaPerOra();
+    if (voluto !== temaAttuale()) applica(voluto);
+  }
+  setInterval(ricontrolla, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) ricontrolla(); });
+  window.addEventListener('focus', ricontrolla);
 
   bottone.addEventListener('click', () => {
-    const nuovo = radice.dataset.tema === 'scuro' ? 'chiaro' : 'scuro';
-    applica(nuovo);
-    try { localStorage.setItem(CHIAVE, nuovo); } catch (e){}
+    sceltaManuale = temaAttuale() === 'scuro' ? 'chiaro' : 'scuro';
+    applica(sceltaManuale);
+    try { localStorage.setItem(CHIAVE, sceltaManuale); } catch (e){}
   });
+})();
+
+/* ---------- Tipo: Uscita / Entrata ---------- */
+(function(){
+  const sel = document.getElementById('tipo');
+  const gruppo = document.getElementById('tipoSwitch');
+  if (!sel || !gruppo) return;
+  const bottoni = [...gruppo.querySelectorAll('[data-tipo]')];
+
+  function aggiorna(){
+    bottoni.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tipo === sel.value)));
+  }
+  function scegli(valore){
+    if (sel.value !== valore){
+      sel.value = valore;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    aggiorna();
+  }
+
+  gruppo.addEventListener('click', e => {
+    const b = e.target.closest('[data-tipo]');
+    if (b) scegli(b.dataset.tipo);
+  });
+  gruppo.addEventListener('keydown', e => {
+    if (!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+    e.preventDefault();
+    const i = bottoni.findIndex(b => b.getAttribute('aria-pressed') === 'true');
+    const n = e.key === 'Home' ? 0 : e.key === 'End' ? bottoni.length - 1
+      : (i + (e.key === 'ArrowRight' ? 1 : -1) + bottoni.length) % bottoni.length;
+    bottoni[n].focus();
+    scegli(bottoni[n].dataset.tipo);
+  });
+  document.getElementById('txForm').addEventListener('reset', () => setTimeout(aggiorna, 0));
+  window.__syncTipoUI = aggiorna;
+  aggiorna();
 })();
 </script>
 </body>
