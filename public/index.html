@@ -490,6 +490,13 @@ try{
   .tema-btn svg{width:17px;height:17px}
   .tema-btn .ico-sole{display:none}
 
+  /* Cifre nascoste: il tasto si "accende" quando il mascheramento è attivo */
+  #cifreBtn .ico-occhio-off{display:none}
+  #cifreBtn[aria-pressed="true"]{background:var(--petrolio);border-color:var(--petrolio);color:#f3fbfa}
+  #cifreBtn[aria-pressed="true"]:hover{background:#14505d;border-color:#14505d}
+  #cifreBtn[aria-pressed="true"] .ico-occhio{display:none}
+  #cifreBtn[aria-pressed="true"] .ico-occhio-off{display:block}
+
   /* Tipo: Uscita / Entrata, controllo segmentato al posto del select nativo */
   .tipo-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;height:38px;padding:4px;
     background:rgba(15,63,74,.05);border:1px solid rgba(15,63,74,.10);border-radius:16px}
@@ -649,6 +656,8 @@ try{
   html[data-tema="scuro"] .cal-shortcuts{border-top-color:rgba(255,255,255,.08)}
   html[data-tema="scuro"] .cal-shortcuts button{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:var(--ink)}
   html[data-tema="scuro"] .cal-shortcuts button:hover{background:rgba(255,255,255,.10)}
+  html[data-tema="scuro"] #cifreBtn[aria-pressed="true"]{background:var(--acqua);border-color:var(--acqua);color:#062024}
+  html[data-tema="scuro"] #cifreBtn[aria-pressed="true"]:hover{background:#8fe7dc;border-color:#8fe7dc}
   html[data-tema="scuro"] .tipo-switch{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.10)}
   html[data-tema="scuro"] .tipo-switch button[aria-pressed="true"]{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.07);box-shadow:none}
 </style>
@@ -704,6 +713,10 @@ try{
       </div>
       <input id="restoreFile" type="file" accept=".json,application/json" class="hidden">
     </div>
+    <button id="cifreBtn" class="tema-btn" type="button" aria-pressed="false" aria-label="Nascondi le cifre" title="Nascondi le cifre">
+      <svg class="ico ico-occhio" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.8 10S4.6 4.7 10 4.7 18.2 10 18.2 10 15.4 15.3 10 15.3 1.8 10 1.8 10Z"/><circle cx="10" cy="10" r="2.5"/></svg>
+      <svg class="ico ico-occhio-off" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.3 5.4A7.7 7.7 0 0 1 10 4.7c5.4 0 8.2 5.3 8.2 5.3a15 15 0 0 1-3 3.5M4.2 6.6A15.6 15.6 0 0 0 1.8 10S4.6 15.3 10 15.3a7.7 7.7 0 0 0 3.1-.6"/><path d="M8.2 8.2a2.5 2.5 0 0 0 3.6 3.6"/><path d="M3 3l14 14"/></svg>
+    </button>
     <button id="temaBtn" class="tema-btn" type="button" aria-pressed="false" aria-label="Passa al tema scuro" title="Tema scuro">
       <svg class="ico ico-luna" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 12.2A6.6 6.6 0 0 1 7.8 4a6.7 6.7 0 1 0 8.2 8.2Z"/></svg>
       <svg class="ico ico-sole" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.4v1.8M10 15.8v1.8M2.4 10h1.8M15.8 10h1.8M4.6 4.6l1.3 1.3M14.1 14.1l1.3 1.3M15.4 4.6l-1.3 1.3M5.9 14.1l-1.3 1.3"/></svg>
@@ -991,7 +1004,9 @@ const state = {
   regole: {}
 };
 const money = new Intl.NumberFormat('it-IT', { style:'currency', currency:'EUR' });
-const fmt = n => money.format(Number(n) || 0);
+let cifreNascoste = false;
+const fmt = n => cifreNascoste ? '€ ***' : money.format(Number(n) || 0);
+const pct = (n, segno = '') => cifreNascoste ? '***%' : segno + Math.round(n) + '%';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $ = id => document.getElementById(id);
 const monthKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
@@ -1097,6 +1112,19 @@ function render(){
   renderStats(); renderChart(); renderComparison(); renderTable(); renderCatFilter();
 }
 
+/* ---------- Nascondi cifre ---------- */
+(function(){
+  const bottone = $('cifreBtn');
+  if (!bottone) return;
+  function mostraStato(){
+    bottone.setAttribute('aria-pressed', String(cifreNascoste));
+    bottone.setAttribute('aria-label', cifreNascoste ? 'Mostra le cifre' : 'Nascondi le cifre');
+    bottone.title = cifreNascoste ? 'Mostra le cifre' : 'Nascondi le cifre';
+  }
+  bottone.addEventListener('click', () => { cifreNascoste = !cifreNascoste; mostraStato(); render(); });
+  mostraStato();
+})();
+
 function renderStats(){
   const rows = periodRows();
   const entrate = rows.filter(t => t.tipo === 'entrata');
@@ -1114,7 +1142,7 @@ function renderStats(){
   $('statUsciteMeta').textContent = `${uscite.length} ${uscite.length === 1 ? 'movimento' : 'movimenti'}`;
   $('statSaldoMeta').textContent = rate === null
     ? 'Nessuna entrata nel periodo'
-    : (rate >= 0 ? `Hai messo da parte il ${rate}% delle entrate` : `Hai speso il ${Math.abs(rate)}% in più delle entrate`);
+    : (rate >= 0 ? `Hai messo da parte il ${pct(rate)} delle entrate` : `Hai speso il ${pct(Math.abs(rate))} in più delle entrate`);
   $('chartPeriod').textContent = state.month ? monthName(state.month) : 'tutto il periodo';
   $('monthLabel').textContent = state.month ? monthName(state.month) : 'Tutto il periodo';
   $('allTime').setAttribute('aria-pressed', String(!state.month));
@@ -1161,11 +1189,11 @@ function renderComparison(){
 
   if (difference > 0.005){
     deltaClass = 'is-up';
-    deltaText = `${fmt(absoluteDifference)} in più${previousTotal > 0 ? ` · +${Math.round(difference / previousTotal * 100)}%` : ''}`;
+    deltaText = `${fmt(absoluteDifference)} in più${previousTotal > 0 ? ` · ${pct(difference / previousTotal * 100, '+')}` : ''}`;
     detailText = `Hai registrato ${movementName} per un importo maggiore rispetto ai primi ${daysToCompare} ${daysToCompare === 1 ? 'giorno' : 'giorni'} del mese precedente.`;
   } else if (difference < -0.005){
     deltaClass = 'is-down';
-    deltaText = `${fmt(absoluteDifference)} in meno${previousTotal > 0 ? ` · −${Math.round(absoluteDifference / previousTotal * 100)}%` : ''}`;
+    deltaText = `${fmt(absoluteDifference)} in meno${previousTotal > 0 ? ` · ${pct(absoluteDifference / previousTotal * 100, '−')}` : ''}`;
     detailText = `Hai registrato ${movementName} per un importo minore rispetto ai primi ${daysToCompare} ${daysToCompare === 1 ? 'giorno' : 'giorni'} del mese precedente.`;
   } else if (previousTotal === 0){
     deltaClass = 'is-same';
@@ -1249,7 +1277,7 @@ function renderChart(){
           <span class="dot" style="background:${catColor(name)}"></span>${esc(name)}
         </span>
         <span class="text-[12px] num text-[#5f5a4d] whitespace-nowrap">${fmt(val)}
-          <span class="text-[#a8a392]">${Math.round(val / total * 100)}%</span></span>
+          <span class="text-[#a8a392]">${pct(val / total * 100)}</span></span>
       </div>
       <div class="bar"><span style="width:${Math.max(2, val / total * 100)}%;background:${catColor(name)}"></span></div>
     </div>`).join('')
