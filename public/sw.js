@@ -1,5 +1,5 @@
-const CACHE = 'spese-v8';
-const SHELL = ['/', '/index.html', '/manifest.json', '/icon.svg'];
+const CACHE = 'spese-v12';
+const SHELL = ['/', '/index.html', '/manifest.json', '/icon.svg', '/media/sfondo-giorno.jpg', '/media/sfondo-notte.jpg'];
 
 self.addEventListener('install', evento => {
   evento.waitUntil(
