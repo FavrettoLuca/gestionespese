@@ -679,7 +679,7 @@ try{
     --line:rgba(11,60,58,.12);--accent:#a8513a;--income:#0e7a55;
     --panel:rgba(255,255,255,.60);--secondary-line:rgba(255,255,255,.90);--soft:#3c5453;
     --petrolio:#0f7078;--acqua:#2f97a0;--brand:#0f7078;--brand-2:#2f97a0;
-    --vetro:linear-gradient(155deg,rgba(255,255,255,.92),rgba(255,255,255,.72));
+    --vetro:linear-gradient(155deg,rgba(255,255,255,.80),rgba(255,255,255,.52));
     --vetro-bordo:rgba(255,255,255,.95);
     --vetro-ombra:0 1px 0 rgba(255,255,255,.95) inset,0 22px 52px -28px rgba(8,52,50,.42),0 2px 8px -3px rgba(8,52,50,.14);
     --alone:rgba(15,112,120,.32);
@@ -691,7 +691,7 @@ try{
 
   /* --- fondo: la foto, con velo di leggibilita' solo su testata e piede --- */
   #sfondo{background:
-      radial-gradient(1200px 700px at 82% -18%,rgba(255,255,255,.55),rgba(255,255,255,0) 62%),
+      radial-gradient(1200px 700px at 82% -18%,rgba(255,255,255,.22),rgba(255,255,255,0) 62%),
       url('/media/sfondo-giorno.jpg') center center/cover no-repeat}
   #sfondo .strato::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(180deg,rgba(247,251,250,.92) 0%,rgba(247,251,250,.60) 6%,rgba(247,251,250,0) 20%),
@@ -861,7 +861,7 @@ try{
   /* se il browser non sfoca, il vetro diventa carta semi-opaca ma leggibile */
   @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
     .card,.card.p-4,.card.p-5,.spending-compare,header + section .card:last-child{
-      background:linear-gradient(155deg,rgba(255,255,255,.98),rgba(255,255,255,.93))!important}
+      background:linear-gradient(155deg,rgba(255,255,255,.95),rgba(255,255,255,.88))!important}
   }
 
   /* ---------- Vetro notturno: la stessa costa, in abisso verde ---------- */
@@ -870,7 +870,7 @@ try{
     --line:rgba(255,255,255,.10);--accent:#ff9e7d;--income:#4fe0a8;
     --panel:rgba(255,255,255,.05);--secondary-line:rgba(255,255,255,.13);--soft:#a8c4bf;
     --petrolio:#0f8c83;--acqua:#5eead4;--brand:#2dd4bf;--brand-2:#14b8a6;
-    --vetro:linear-gradient(155deg,rgba(13,46,42,.82),rgba(5,20,17,.72));
+    --vetro:linear-gradient(155deg,rgba(13,46,42,.72),rgba(5,20,17,.52));
     --vetro-bordo:rgba(255,255,255,.14);
     --vetro-ombra:0 1px 0 rgba(255,255,255,.08) inset,0 28px 64px -34px rgba(0,0,0,.95),0 2px 12px -4px rgba(0,0,0,.65);
     --alone:rgba(45,212,191,.45);
@@ -903,6 +903,8 @@ try{
   html[data-tema="scuro"] #statSaldo{color:var(--ink)!important}
   html[data-tema="scuro"] .seg{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.13)}
   html[data-tema="scuro"] .seg button[aria-pressed="true"]{background:rgba(255,255,255,.14);color:var(--acqua);box-shadow:none}
+  /* nel riquadro rapido lo sfondo e' piu' chiaro: il testo attivo sale di un gradino per restare >= 4.5:1 */
+  html[data-tema="scuro"] #quickTipo button[aria-pressed="true"]{color:#a5f2e6}
   html[data-tema="scuro"] .btn-primary{background:var(--grad-brand);color:#04211e;border-color:rgba(255,255,255,.2)}
   html[data-tema="scuro"] .btn-primary:hover{background:var(--grad-brand-hover);color:#04211e}
   html[data-tema="scuro"] .btn-ghost{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.13);color:var(--ink)}
