@@ -1,4 +1,4 @@
-const CACHE = 'spese-v14';
+const CACHE = 'spese-v15';
 const SHELL = ['/', '/index.html', '/manifest.json', '/icon.svg', '/media/sfondo-giorno.jpg', '/media/sfondo-notte.jpg'];
 
 self.addEventListener('install', evento => {

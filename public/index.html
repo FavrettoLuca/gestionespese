@@ -10,9 +10,8 @@
 /* Applica subito il tema scelto, per evitare il lampo chiaro all'apertura. */
 try{
   var temaSalvato = localStorage.getItem('spese-tema');
-  var oraCorrente = new Date().getHours();
-  var temaNotte = oraCorrente >= 19 || oraCorrente < 7;
-  var temaScuro = temaSalvato ? temaSalvato === 'scuro' : temaNotte;
+  /* primo avvio senza scelta salvata: parte in tema scuro. Poi vale l'ultima scelta. */
+  var temaScuro = temaSalvato ? temaSalvato === 'scuro' : true;
   if (temaScuro){
     document.documentElement.dataset.tema = 'scuro';
     var metaTema = document.querySelector('meta[name="theme-color"]');
@@ -679,7 +678,7 @@ try{
     --line:rgba(11,60,58,.12);--accent:#a8513a;--income:#0e7a55;
     --panel:rgba(255,255,255,.60);--secondary-line:rgba(255,255,255,.90);--soft:#3c5453;
     --petrolio:#0f7078;--acqua:#2f97a0;--brand:#0f7078;--brand-2:#2f97a0;
-    --vetro:linear-gradient(155deg,rgba(255,255,255,.80),rgba(255,255,255,.52));
+    --vetro:linear-gradient(155deg,rgba(255,255,255,.68),rgba(255,255,255,.40));
     --vetro-bordo:rgba(255,255,255,.95);
     --vetro-ombra:0 1px 0 rgba(255,255,255,.95) inset,0 22px 52px -28px rgba(8,52,50,.42),0 2px 8px -3px rgba(8,52,50,.14);
     --alone:rgba(15,112,120,.32);
@@ -870,7 +869,7 @@ try{
     --line:rgba(255,255,255,.10);--accent:#ff9e7d;--income:#4fe0a8;
     --panel:rgba(255,255,255,.05);--secondary-line:rgba(255,255,255,.13);--soft:#a8c4bf;
     --petrolio:#0f8c83;--acqua:#5eead4;--brand:#2dd4bf;--brand-2:#14b8a6;
-    --vetro:linear-gradient(155deg,rgba(13,46,42,.72),rgba(5,20,17,.52));
+    --vetro:linear-gradient(155deg,rgba(13,46,42,.62),rgba(5,20,17,.40));
     --vetro-bordo:rgba(255,255,255,.14);
     --vetro-ombra:0 1px 0 rgba(255,255,255,.08) inset,0 28px 64px -34px rgba(0,0,0,.95),0 2px 12px -4px rgba(0,0,0,.65);
     --alone:rgba(45,212,191,.45);
